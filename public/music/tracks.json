@@ -1,0 +1,29 @@
+[
+  {
+    "id": "soft_room",
+    "title": "Soft Room (placeholder)",
+    "mood": "romantic",
+    "file": "/music/placeholder_soft.wav",
+    "license": "Original placeholder. Replace this file and rewrite the credit before launch.",
+    "credit": "Les Memora placeholder tone. Not for release. Swap in your licensed recording and name the artist here.",
+    "source_url": ""
+  },
+  {
+    "id": "warm_room",
+    "title": "Warm Room (placeholder)",
+    "mood": "nostalgic",
+    "file": "/music/placeholder_warm.wav",
+    "license": "Original placeholder. Replace this file and rewrite the credit before launch.",
+    "credit": "Les Memora placeholder tone. Not for release. Swap in your licensed recording and name the artist here.",
+    "source_url": ""
+  },
+  {
+    "id": "bright_room",
+    "title": "Bright Room (placeholder)",
+    "mood": "celebratory",
+    "file": "/music/placeholder_bright.wav",
+    "license": "Original placeholder. Replace this file and rewrite the credit before launch.",
+    "credit": "Les Memora placeholder tone. Not for release. Swap in your licensed recording and name the artist here.",
+    "source_url": ""
+  }
+]

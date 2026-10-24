@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@import "./museum.css";
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #1a0e16;
+  color: #f6e8ee;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid #f3c5d4;
+  outline-offset: 3px;
+}
+
+::selection {
+  background: #e28aa6;
+  color: #1a0e16;
+}
+
+.font_display {
+  font-family: var(--mm-display, var(--font-fraunces)), Georgia, serif;
+}
+
+.sr_only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
