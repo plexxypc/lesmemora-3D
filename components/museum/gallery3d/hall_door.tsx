@@ -62,12 +62,12 @@ export function HallDoor({ z, theme, next_accent }: hall_door_props) {
       {([-1, 1] as const).map((side) => (
         <mesh key={side} position={[side * (half + 0.08), hall.door_height / 2, 0]}>
           <boxGeometry args={[0.16, hall.door_height + 0.1, t + 0.06]} />
-          <meshStandardMaterial color={palette.door} roughness={0.7} emissive={palette.accent} emissiveIntensity={0.1} />
+          <meshLambertMaterial color={palette.door} emissive={palette.accent} emissiveIntensity={0.1} />
         </mesh>
       ))}
       <mesh position={[0, hall.door_height + 0.05, 0]}>
         <boxGeometry args={[hall.door_width + 0.4, 0.14, t + 0.06]} />
-        <meshStandardMaterial color={palette.door} roughness={0.7} emissive={palette.accent} emissiveIntensity={0.1} />
+        <meshLambertMaterial color={palette.door} emissive={palette.accent} emissiveIntensity={0.1} />
       </mesh>
       <mesh position={[0, hall.door_height + 0.13, t / 2 + 0.02]}>
         <planeGeometry args={[hall.door_width + 0.3, 0.035]} />
@@ -77,7 +77,7 @@ export function HallDoor({ z, theme, next_accent }: hall_door_props) {
       <group ref={left} position={[-half, 0, 0]}>
         <mesh position={[half / 2, hall.door_height / 2, 0]}>
           <boxGeometry args={[half, hall.door_height, 0.07]} />
-          <meshStandardMaterial color={palette.door} roughness={0.6} metalness={0.1} />
+          <meshLambertMaterial color={palette.door} />
         </mesh>
         <mesh position={[half / 2, hall.door_height / 2, 0.04]}>
           <planeGeometry args={[half * 0.7, hall.door_height * 0.82]} />
@@ -91,7 +91,7 @@ export function HallDoor({ z, theme, next_accent }: hall_door_props) {
       <group ref={right} position={[half, 0, 0]}>
         <mesh position={[-half / 2, hall.door_height / 2, 0]}>
           <boxGeometry args={[half, hall.door_height, 0.07]} />
-          <meshStandardMaterial color={palette.door} roughness={0.6} metalness={0.1} />
+          <meshLambertMaterial color={palette.door} />
         </mesh>
         <mesh position={[-half / 2, hall.door_height / 2, 0.04]}>
           <planeGeometry args={[half * 0.7, hall.door_height * 0.82]} />

@@ -61,7 +61,6 @@ export function HallShell({ entry, theme, tier, next_accent, is_first }: hall_sh
   const wall_color = tint(palette.background, palette.accent_soft, 0.12);
   const ceiling_color = tint(palette.background_deep, palette.background, 0.6);
   const trim = palette.door;
-  const lights = tier === "high" ? [0.28, 0.72] : [0.5];
 
   return (
     <group>
@@ -109,10 +108,12 @@ export function HallShell({ entry, theme, tier, next_accent, is_first }: hall_sh
             <boxGeometry args={[0.1, 0.05, depth]} />
             <meshBasicMaterial color={palette.accent_soft} toneMapped={false} />
           </mesh>
-          <mesh rotation={[0, side * -Math.PI / 2, 0]} position={[side * (width / 2 - 0.4), height - 0.12, middle]}>
-            <planeGeometry args={[depth, 0.8]} />
-            <meshBasicMaterial map={glow} color={palette.accent_soft} transparent opacity={0.16} blending={AdditiveBlending} depthWrite={false} side={DoubleSide} toneMapped={false} />
-          </mesh>
+          {tier === "high" ? (
+            <mesh rotation={[0, side * -Math.PI / 2, 0]} position={[side * (width / 2 - 0.4), height - 0.12, middle]}>
+              <planeGeometry args={[depth, 0.8]} />
+              <meshBasicMaterial map={glow} color={palette.accent_soft} transparent opacity={0.16} blending={AdditiveBlending} depthWrite={false} side={DoubleSide} toneMapped={false} />
+            </mesh>
+          ) : null}
         </group>
       ))}
 
@@ -146,16 +147,6 @@ export function HallShell({ entry, theme, tier, next_accent, is_first }: hall_sh
         </mesh>
       )}
 
-      {lights.map((fraction) => (
-        <pointLight
-          key={fraction}
-          position={[0, height - 0.5, entry.z_near - depth * fraction]}
-          color={palette.accent_soft}
-          intensity={tier === "high" ? 24 : 36}
-          distance={16}
-          decay={2}
-        />
-      ))}
     </group>
   );
 }

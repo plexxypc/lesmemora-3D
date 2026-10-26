@@ -109,7 +109,7 @@ export function ExhibitFrame({ frame, theme, tier, on_inspect }: exhibit_frame_p
   return (
     <group position={[frame.position.x, frame.position.y, frame.position.z]} rotation={[0, frame.rotation_y, 0]}>
       <mesh position={[0, 0, 0.006]} renderOrder={1}>
-        <planeGeometry args={[frame.width * 2.1, frame.height * 2.1]} />
+        <planeGeometry args={[frame.width * (tier === "high" ? 2.1 : 1.7), frame.height * (tier === "high" ? 2.1 : 1.7)]} />
         <meshBasicMaterial
           map={glow}
           color={palette.accent_soft}
@@ -123,7 +123,7 @@ export function ExhibitFrame({ frame, theme, tier, on_inspect }: exhibit_frame_p
 
       <mesh position={[0, 0, 0.03]}>
         <boxGeometry args={[slab_w, slab_h, 0.06]} />
-        {look.metal ? (
+        {look.metal && tier === "high" ? (
           <meshStandardMaterial color={look.outer} metalness={0.85} roughness={0.32} />
         ) : (
           <meshLambertMaterial color={look.outer} />
@@ -140,7 +140,7 @@ export function ExhibitFrame({ frame, theme, tier, on_inspect }: exhibit_frame_p
             ([-1, 1] as const).map((sy) => (
               <mesh key={`${sx}${sy}`} position={[(slab_w / 2) * sx * 0.97, (slab_h / 2) * sy * 0.97, 0.075]}>
                 <sphereGeometry args={[0.035, 10, 8]} />
-                {look.metal ? (
+                {look.metal && tier === "high" ? (
                   <meshStandardMaterial color="#e6c673" metalness={0.9} roughness={0.25} />
                 ) : (
                   <meshLambertMaterial color={palette.accent} />
@@ -162,6 +162,7 @@ export function ExhibitFrame({ frame, theme, tier, on_inspect }: exhibit_frame_p
         </mesh>
       ) : null}
 
+      {tier === "high" ? (
       <group position={cone.middle.toArray()} quaternion={cone.quaternion}>
         <mesh renderOrder={2}>
           <cylinderGeometry args={[0.05, 0.95, cone.length, 24, 1, true]} />
@@ -177,6 +178,7 @@ export function ExhibitFrame({ frame, theme, tier, on_inspect }: exhibit_frame_p
           />
         </mesh>
       </group>
+      ) : null}
       <mesh position={cone.lamp.toArray()}>
         <sphereGeometry args={[0.07, 12, 8]} />
         <meshBasicMaterial color={palette.accent_soft} toneMapped={false} />

@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { AdditiveBlending, DoubleSide, Quaternion, Vector3, type CanvasTexture } from "three";
 import type { ThreeEvent } from "@react-three/fiber";
 import { set_pointer } from "@/components/museum/gallery3d/exhibit_frame";
+import type { gallery_tier } from "@/components/museum/gallery3d/quality";
 import { beam_texture, glow_texture, plaque_texture } from "@/components/museum/gallery3d/textures";
 import { hall, type placed_frame } from "@/lib/gallery_layout";
 import { format_exhibit_date } from "@/lib/format";
@@ -12,6 +13,7 @@ import type { theme_config } from "@/lib/types";
 export interface plaque_props {
   frame: placed_frame;
   theme: theme_config;
+  tier: gallery_tier;
   family: string;
   on_inspect: (id: string) => void;
 }
@@ -22,7 +24,7 @@ export interface plaque_props {
  * @param props - Frame placement, theme, loaded font family, and inspect handler.
  * @returns The plaque group and its floor marker.
  */
-export function Plaque({ frame, theme, family, on_inspect }: plaque_props) {
+export function Plaque({ frame, theme, tier, family, on_inspect }: plaque_props) {
   const { palette } = theme;
   const texture = useMemo<CanvasTexture>(
     () =>
@@ -32,10 +34,10 @@ export function Plaque({ frame, theme, family, on_inspect }: plaque_props) {
         body: frame.exhibit.body,
         family,
         palette,
-        width: 1024,
-        height: Math.round(1024 * (frame.height / frame.width)),
+        width: tier === "high" ? 1024 : 768,
+        height: Math.round((tier === "high" ? 1024 : 768) * (frame.height / frame.width)),
       }),
-    [frame.exhibit.date, frame.exhibit.caption, frame.exhibit.body, frame.height, frame.width, family, palette],
+    [frame.exhibit.date, frame.exhibit.caption, frame.exhibit.body, frame.height, frame.width, family, palette, tier],
   );
   useEffect(() => () => texture.dispose(), [texture]);
 
@@ -76,12 +78,14 @@ export function Plaque({ frame, theme, family, on_inspect }: plaque_props) {
           <planeGeometry args={[frame.width, frame.height]} />
           <meshBasicMaterial map={texture} toneMapped={false} />
         </mesh>
+        {tier === "high" ? (
         <group position={cone.middle.toArray()} quaternion={cone.quaternion}>
           <mesh renderOrder={2}>
             <cylinderGeometry args={[0.05, 0.9, cone.length, 24, 1, true]} />
             <meshBasicMaterial color={palette.accent_soft} alphaMap={beam} transparent opacity={0.09} blending={AdditiveBlending} depthWrite={false} side={DoubleSide} toneMapped={false} />
           </mesh>
         </group>
+        ) : null}
         <mesh position={cone.lamp.toArray()}>
           <sphereGeometry args={[0.07, 12, 8]} />
           <meshBasicMaterial color={palette.accent_soft} toneMapped={false} />

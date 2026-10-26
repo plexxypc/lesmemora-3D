@@ -33,8 +33,24 @@ export function read_forced_quality(): forced_quality {
 }
 
 /**
+ * Whether the main input is a finger. Phones and tablets report a coarse pointer,
+ * and iPads that pretend to be Macs still report touch points.
+ *
+ * @returns True on touch devices.
+ */
+export function is_touch_device(): boolean {
+  try {
+    return window.matchMedia("(pointer: coarse)").matches || navigator.maxTouchPoints > 1;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Pick a starting tier from what the device reports.
- * Few cores or little memory start low. Measured speed can still move it later.
+ * Phones, tablets, and machines with few cores or little memory start low,
+ * because they have far less graphics power than their screens suggest.
+ * Measured speed can still move the tier later.
  *
  * @returns The starting tier.
  */
@@ -46,7 +62,33 @@ export function detect_tier(): gallery_tier {
   const nav = navigator as Navigator & { deviceMemory?: number };
   const cores = nav.hardwareConcurrency ?? 4;
   const memory = nav.deviceMemory ?? 4;
-  return cores <= 4 || memory <= 3 ? "low" : "high";
+  return is_touch_device() || cores <= 4 || memory <= 3 ? "low" : "high";
+}
+
+/** The three ways to visit a museum. */
+export type experience_choice = "guided" | "explore" | "simple";
+
+/**
+ * Set to true once the 3D hall is smooth enough on phones to recommend there.
+ * Until then phones are pointed at the simple version, which works everywhere.
+ */
+export const recommend_3d_on_touch = false;
+
+/**
+ * Which way to visit to suggest on this device.
+ *
+ * @param webgl - Whether the browser can show 3D.
+ * @param touch - Whether this is a phone or tablet.
+ * @returns The suggested choice.
+ */
+export function recommended_experience(webgl: boolean, touch: boolean): experience_choice {
+  if (!webgl) {
+    return "simple";
+  }
+  if (touch && !recommend_3d_on_touch) {
+    return "simple";
+  }
+  return "guided";
 }
 
 /**
@@ -56,5 +98,5 @@ export function detect_tier(): gallery_tier {
  * @returns Pixels.
  */
 export function photo_max_px(tier: gallery_tier): number {
-  return tier === "low" ? 768 : 1024;
+  return tier === "low" ? 640 : 1024;
 }

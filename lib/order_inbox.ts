@@ -1,4 +1,6 @@
+import { readdirSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
+import { is_photo_file, natural_sort } from "./order_checks";
 
 /**
  * Folder of raw customer photos. It is gitignored.
@@ -45,4 +47,24 @@ export function order_status_label(expires_at_ms: number, now: Date): "active" |
     return "expiring within 7 days";
   }
   return "active";
+}
+
+/**
+ * Photos in a customer folder, in the order they were sent.
+ *
+ * @param folder - Absolute path to the customer folder.
+ * @returns Photo file names, naturally sorted.
+ */
+export function list_inbox_photos(folder: string): string[] {
+  return natural_sort(readdirSync(folder).filter(is_photo_file));
+}
+
+/**
+ * Every file name in a customer folder.
+ *
+ * @param folder - Absolute path to the customer folder.
+ * @returns File names.
+ */
+export function list_inbox_files(folder: string): string[] {
+  return readdirSync(folder);
 }

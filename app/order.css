@@ -1,0 +1,360 @@
+.order_page {
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 0.5rem 1.1rem 3rem;
+}
+
+.order_head h1 {
+  margin: 0.2rem 0 0.4rem;
+  font-size: clamp(2.2rem, 7vw, 3.4rem);
+  line-height: 1;
+}
+
+.order_head p {
+  max-width: 36rem;
+  color: var(--mm-text-muted);
+}
+
+.order_kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mm-accent-soft) !important;
+}
+
+.order_restored {
+  font-size: 0.9rem;
+}
+
+.order_link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--mm-accent-soft);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.order_steps {
+  display: flex;
+  gap: 0.35rem;
+  margin: 1.2rem 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.order_steps li {
+  flex: 1 0 auto;
+}
+
+.order_steps button {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 20%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mm-text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.order_steps li[aria-current="step"] button {
+  border-color: var(--mm-accent);
+  background: color-mix(in srgb, var(--mm-accent) 22%, transparent);
+  color: var(--mm-text);
+}
+
+.order_steps li[data-done="true"] button {
+  color: var(--mm-text);
+}
+
+.order_steps button span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  margin-right: 0.25rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--mm-text) 16%, transparent);
+  font-size: 0.72rem;
+}
+
+.order_card {
+  display: grid;
+  gap: 1.1rem;
+  padding: 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 16%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--mm-bg-deep) 70%, transparent);
+}
+
+.order_card h2,
+.order_card h3 {
+  margin: 0;
+}
+
+.order_card h3 {
+  margin-top: 0.6rem;
+  font-size: 1.4rem;
+}
+
+.order_field {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.order_field > span,
+.order_field > legend {
+  padding: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.order_field small,
+.order_note {
+  margin: 0;
+  color: var(--mm-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.order_card input[type="text"],
+.order_card input:not([type]),
+.order_card input[type="date"],
+.order_card textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 26%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--mm-bg) 60%, transparent);
+  color: var(--mm-text);
+  font: inherit;
+  font-size: 1rem;
+}
+
+.order_card textarea {
+  resize: vertical;
+}
+
+.order_card input:focus-visible,
+.order_card textarea:focus-visible {
+  outline: 2px solid var(--mm-accent);
+  outline-offset: 1px;
+}
+
+.order_chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.order_chips button {
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 26%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--mm-text);
+}
+
+.order_chips button[aria-pressed="true"] {
+  border-color: var(--mm-accent);
+  background: color-mix(in srgb, var(--mm-accent) 26%, transparent);
+}
+
+.order_themes,
+.order_plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  gap: 0.6rem;
+}
+
+.order_theme,
+.order_plan {
+  position: relative;
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+  padding: 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 20%, transparent);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.order_theme[data-selected="true"],
+.order_plan[data-selected="true"] {
+  border-color: var(--mm-accent);
+  background: color-mix(in srgb, var(--mm-accent) 16%, transparent);
+}
+
+.order_theme input,
+.order_plan input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.order_theme:focus-within,
+.order_plan:focus-within {
+  outline: 2px solid var(--mm-accent);
+  outline-offset: 2px;
+}
+
+.order_swatch {
+  width: 100%;
+  height: 34px;
+  border-radius: 8px;
+}
+
+.order_theme small,
+.order_plan small {
+  color: var(--mm-text-muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.order_list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.order_row {
+  display: grid;
+  grid-template-columns: 1.7rem 1fr 40px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.order_index {
+  color: var(--mm-text-muted);
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.order_milestone {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr 1fr 40px;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.order_remove {
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 22%, transparent);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mm-text);
+  font-size: 1.2rem;
+}
+
+.order_remove:disabled {
+  opacity: 0.35;
+}
+
+.order_errors,
+.order_warning {
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, #ff6b6b 18%, transparent);
+  font-size: 0.9rem;
+}
+
+.order_errors p,
+.order_warning {
+  margin: 0;
+}
+
+.order_warning {
+  background: color-mix(in srgb, #ffcf5a 16%, transparent);
+}
+
+.order_summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.order_summary div {
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--mm-text) 7%, transparent);
+}
+
+.order_summary dt {
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mm-text-muted);
+}
+
+.order_summary dd {
+  margin: 0.1rem 0 0;
+}
+
+.order_send {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.order_send a[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.order_after {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--mm-text-muted);
+  line-height: 1.6;
+}
+
+.order_preview summary {
+  cursor: pointer;
+  color: var(--mm-accent-soft);
+}
+
+.order_preview pre {
+  max-height: 18rem;
+  margin: 0.6rem 0 0;
+  padding: 0.8rem;
+  overflow: auto;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--mm-bg) 70%, transparent);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+.order_nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .order_milestone {
+    grid-template-columns: 1fr 40px;
+  }
+  .order_milestone input[type="date"],
+  .order_milestone input:nth-child(2),
+  .order_milestone input:nth-child(3) {
+    grid-column: 1;
+  }
+  .order_milestone .order_remove {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}

@@ -75,3 +75,19 @@ Testing shortcuts (add to the museum address):
 Where things live: `lib/gallery_layout.ts` (rooms to 3D space, guided stops, walking limits), `lib/gallery_tour.ts` (camera path math, no three.js), `components/museum/gallery3d/` (scene, camera, HUD, overlays). `tests/gallery_layout.test.ts` covers the layout and path for every sample museum in both landscape and portrait.
 
 For the later video export, `run_guided_tour` and `get_canvas` on the viewer handle are still exposed, and the tour clock is deterministic.
+
+## How visitors choose to explore
+
+Every museum link opens a short "How would you like to visit?" screen first. It loads none of the 3D code.
+
+- **Guided 3D tour**: a camera walks through every room and pauses at each photo, date, and letter.
+- **Explore in 3D**: the same rooms, but the visitor walks and looks around.
+- **Simple version**: the swipeable 2.5D gallery. It works on every device and is the fallback.
+
+The screen suggests one for the device. Phones and tablets are pointed at the simple version for now. When the 3D hall has been checked on real phones, set `recommend_3d_on_touch` to `true` in `components/museum/gallery3d/quality.ts` to suggest 3D on them too. A visitor can change their mind at any time from the menu.
+
+On phones and weaker computers the 3D hall runs a lighter setting (no dynamic lights, no beams of light, smaller textures, 30 frames per second). If a device still cannot keep up, it switches to the simple version by itself.
+
+## The order form
+
+`/order` is a five-step form. It does not store anything on a server. At the end it opens WhatsApp with the answers already typed as one message. The customer then sends the photos in the chat. The message format is defined in `lib/intake.ts`, and `npm run intake` turns a saved message back into an order draft. See `order_inbox/README.md` for the full order workflow.

@@ -404,7 +404,8 @@ export function room_at_elapsed(timeline: tour_timeline, elapsed_ms: number): nu
 }
 
 /**
- * Cap the drawing resolution. Phones stay at 1.5; a fine pointer may use 2.
+ * Cap the drawing resolution. High tier: up to 2 with a mouse, 1.5 on touch.
+ * Low tier: 1.25 on touch (the 30 fps cap pays for it) and 1 on a weak computer.
  *
  * @param device_pixel_ratio - `window.devicePixelRatio`.
  * @param pointer_is_fine - True for a mouse or trackpad.
@@ -415,7 +416,7 @@ export function gallery_pixel_ratio(device_pixel_ratio: number, pointer_is_fine:
   if (!Number.isFinite(device_pixel_ratio) || device_pixel_ratio <= 0) {
     return 1;
   }
-  const cap = low_tier ? 1 : pointer_is_fine ? 2 : 1.5;
+  const cap = low_tier ? (pointer_is_fine ? 1 : 1.25) : pointer_is_fine ? 2 : 1.5;
   return Math.min(device_pixel_ratio, cap);
 }
 

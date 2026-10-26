@@ -184,6 +184,7 @@ export interface menu_sheet_props {
   museum: museum;
   on_panel: (panel: panel_kind) => void;
   on_simple_mode: () => void;
+  on_change_experience: () => void;
   on_close: () => void;
 }
 
@@ -193,7 +194,7 @@ export interface menu_sheet_props {
  * @param props - Which panel is open and handlers.
  * @returns The sheet, or nothing when no panel is open.
  */
-export function MenuSheet({ panel, museum, on_panel, on_simple_mode, on_close }: menu_sheet_props) {
+export function MenuSheet({ panel, museum, on_panel, on_simple_mode, on_change_experience, on_close }: menu_sheet_props) {
   if (panel !== "menu" && panel !== "share") {
     return null;
   }
@@ -216,8 +217,11 @@ export function MenuSheet({ panel, museum, on_panel, on_simple_mode, on_close }:
             <button type="button" className="mm_button mm_button_quiet" onClick={() => on_panel("share")}>
               Share this museum
             </button>
+            <button type="button" className="mm_button mm_button_quiet" onClick={on_change_experience}>
+              Choose another way to visit
+            </button>
             <button type="button" className="mm_button mm_button_quiet" onClick={on_simple_mode}>
-              Switch to the simple viewer
+              Switch to the simple version
             </button>
             <p className="gallery3d_menu_links">
               <Link href="/credits">Music credits</Link>

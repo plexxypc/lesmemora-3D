@@ -1,6 +1,6 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { memo, useEffect, useRef, useState, type MutableRefObject } from "react";
 import { CameraRig, type camera_rig_props, type pointer_state } from "@/components/museum/gallery3d/camera_rig";
 import { GalleryScene, type gallery_scene_props } from "@/components/museum/gallery3d/gallery_scene";
@@ -39,7 +39,7 @@ function GalleryCanvasBase({ scene, rig, pointer, tier, explore, on_fps, measure
     <Canvas
       className="gallery3d_canvas"
       flat
-      frameloop={scene.reduce_motion ? "demand" : "always"}
+      frameloop={scene.reduce_motion ? "demand" : tier === "low" ? "never" : "always"}
       dpr={dpr}
       gl={{ antialias: tier === "high", alpha: false, powerPreference: "high-performance" }}
       camera={{ position: [0, 1.55, 0], fov: rig.portrait ? 72 : 62, near: 0.08, far: 60 }}
@@ -48,9 +48,40 @@ function GalleryCanvasBase({ scene, rig, pointer, tier, explore, on_fps, measure
       <GalleryScene {...scene} />
       <CameraRig {...rig} pointer={pointer} />
       <PointerBridge pointer={pointer} enabled={explore} />
+      {tier === "low" && !scene.reduce_motion ? <FrameLimiter fps={30} /> : null}
       <FpsWatch active={measure_fps} on_fps={on_fps} />
     </Canvas>
   );
+}
+
+/**
+ * Draw at a steady, lower frame rate. Phones that cannot hold 60 fps look smoother at a
+ * steady 30 than at a ragged 40, and the battery lasts longer. In this mode the canvas
+ * does not draw by itself, so this component asks for each frame.
+ *
+ * @param props - Target frames per second.
+ * @returns null.
+ */
+function FrameLimiter({ fps }: { fps: number }) {
+  const advance = useThree((state) => state.advance);
+
+  useEffect(() => {
+    let raf = 0;
+    let last = -Infinity;
+    const start = performance.now();
+    const step = 1000 / fps;
+    const loop = (now: number) => {
+      raf = requestAnimationFrame(loop);
+      if (now - last >= step - 3) {
+        last = now;
+        advance((now - start) / 1000 + 0.001);
+      }
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [advance, fps]);
+
+  return null;
 }
 
 /**

@@ -1,13 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useSyncExternalStore } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
+import { ExperienceChooser } from "@/components/museum/experience_chooser";
 import {
-  read_simple_mode,
-  subscribe_simple_mode,
-  write_simple_mode,
-} from "@/components/museum/gallery3d/gallery_state";
-import { read_forced_quality, webgl_supported } from "@/components/museum/gallery3d/quality";
+  is_touch_device,
+  read_forced_quality,
+  recommended_experience,
+  webgl_supported,
+  type experience_choice,
+} from "@/components/museum/gallery3d/quality";
 import { MuseumViewer } from "@/components/museum/museum_viewer";
 import type { library_track, museum, theme_config } from "@/lib/types";
 
@@ -29,39 +31,70 @@ const Museum3DViewer = dynamic(() => import("@/components/museum/gallery3d/museu
   ),
 });
 
-/**
- * Whether this visit should use the simple viewer: the visitor chose it,
- * the address forces it, or this browser has no WebGL.
- *
- * @returns True for the simple viewer.
- */
-function wants_simple(): boolean {
-  return read_simple_mode() || read_forced_quality() === "simple" || !webgl_supported();
+function subscribe_nothing(): () => void {
+  return () => {};
 }
 
 /**
- * Museum entry for `/m/[slug]`. Lazy-loads the 3D viewer and keeps the 2.5D viewer as the fallback.
+ * What this device can do, as one short string so the snapshot stays stable:
+ * "<webgl 0/1><touch 0/1><forced simple 0/1>".
+ *
+ * @returns The device hints.
+ */
+function read_device(): string {
+  return `${webgl_supported() ? 1 : 0}${is_touch_device() ? 1 : 0}${read_forced_quality() === "simple" ? 1 : 0}`;
+}
+
+/**
+ * Museum entry for `/m/[slug]`.
+ * It first asks how the visitor wants to explore. The 3D code is only downloaded when
+ * a 3D option is chosen. The simple version is the fallback for any device.
  *
  * @param props - Museum, theme, and resolved track.
- * @returns The active viewer for this visit.
+ * @returns The chooser, then the chosen viewer.
  */
 export function MuseumExperience({ museum, theme, track }: museum_experience_props) {
-  const simple = useSyncExternalStore(subscribe_simple_mode, wants_simple, () => false);
-  const use_simple = useCallback(() => write_simple_mode(true), []);
-  const use_3d = useCallback(() => write_simple_mode(false), []);
+  const device = useSyncExternalStore(subscribe_nothing, read_device, () => "100");
+  const webgl = device[0] === "1";
+  const touch = device[1] === "1";
+  const forced_simple = device[2] === "1";
+  const [choice, set_choice] = useState<experience_choice | null>(null);
+  const choose_again = useCallback(() => set_choice(null), []);
+  const use_simple = useCallback(() => set_choice("simple"), []);
 
-  if (simple) {
+  const active = choice ?? (forced_simple ? "simple" : null);
+
+  if (active === null) {
+    return (
+      <ExperienceChooser
+        museum={museum}
+        theme={theme}
+        webgl={webgl}
+        recommended={recommended_experience(webgl, touch)}
+        on_choose={set_choice}
+      />
+    );
+  }
+
+  if (active === "simple") {
     return (
       <div className="museum_experience">
         <MuseumViewer museum={museum} theme={theme} track={track} />
-        {read_forced_quality() === "simple" || !webgl_supported() ? null : (
-          <button type="button" className="gallery3d_switch_back" onClick={use_3d}>
-            Switch to 3D mode
-          </button>
-        )}
+        <button type="button" className="change_experience" onClick={choose_again}>
+          Change how I visit
+        </button>
       </div>
     );
   }
 
-  return <Museum3DViewer museum={museum} theme={theme} track={track} on_simple_mode={use_simple} />;
+  return (
+    <Museum3DViewer
+      museum={museum}
+      theme={theme}
+      track={track}
+      start_mode={active}
+      on_simple_mode={use_simple}
+      on_change_experience={choose_again}
+    />
+  );
 }

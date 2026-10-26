@@ -49,7 +49,10 @@ export interface museum_3d_viewer_props {
   museum: museum;
   theme: theme_config;
   track: library_track | null;
+  /** Where the visitor starts: the guided walk, or free exploring. */
+  start_mode: gallery_mode;
   on_simple_mode: () => void;
+  on_change_experience: () => void;
 }
 
 /**
@@ -60,7 +63,7 @@ export interface museum_3d_viewer_props {
  * @returns The 3D experience.
  */
 export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_props>(function Museum3DViewer(
-  { museum, theme, track, on_simple_mode },
+  { museum, theme, track, start_mode, on_simple_mode, on_change_experience },
   ref,
 ) {
   const player_ref = useRef<music_player_handle | null>(null);
@@ -80,7 +83,7 @@ export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_p
 
   const [tier, set_tier] = useState<gallery_tier>(() => detect_tier());
   const [entered, set_entered] = useState(false);
-  const [mode, set_mode] = useState<gallery_mode>("guided");
+  const [mode, set_mode] = useState<gallery_mode>(start_mode);
   const [playing, set_playing] = useState(false);
   useEffect(() => {
     playing_ref.current = playing;
@@ -237,8 +240,8 @@ export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_p
   function enter_museum() {
     player_ref.current?.play();
     set_entered(true);
-    set_mode("guided");
-    seek_to(0, !reduce_motion);
+    set_mode(start_mode);
+    seek_to(0, start_mode === "guided" && !reduce_motion);
     touch_hud();
   }
 
@@ -330,6 +333,7 @@ export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_p
   return (
     <div
       className="mm_viewer gallery3d_viewer"
+      data-tier={tier}
       style={theme_css_vars(theme)}
       data-music={museum.music.source === "spotify" || museum.music.source === "apple" ? museum.music.source : "player"}
       onPointerDown={touch_hud}
@@ -362,7 +366,9 @@ export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_p
           <button type="button" className="mm_button" onClick={enter_museum} autoFocus>
             {theme.default_copy.enter_label}
           </button>
-          <p className="hint">Best in landscape, with the sound on.</p>
+          <p className="hint">
+            {start_mode === "explore" ? "You will walk the rooms yourself. " : "A camera will walk you through. "}Best in landscape, with the sound on.
+          </p>
         </div>
       ) : (
         <GalleryHud
@@ -424,6 +430,7 @@ export const Museum3DViewer = forwardRef<gallery_tour_handle, museum_3d_viewer_p
         museum={museum}
         on_panel={set_panel}
         on_simple_mode={on_simple_mode}
+        on_change_experience={on_change_experience}
         on_close={() => set_panel(null)}
       />
 

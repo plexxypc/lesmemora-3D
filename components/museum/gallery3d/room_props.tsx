@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { AdditiveBlending, type Group, type Mesh } from "three";
 import type { ThreeEvent } from "@react-three/fiber";
 import { set_pointer } from "@/components/museum/gallery3d/exhibit_frame";
+import type { gallery_tier } from "@/components/museum/gallery3d/quality";
 import { glow_texture, glow_text_texture, plaque_texture, wrap_text } from "@/components/museum/gallery3d/textures";
 import { hall, type room_layout } from "@/lib/gallery_layout";
 import type { museum, theme_config } from "@/lib/types";
@@ -13,6 +14,7 @@ export interface room_props_props {
   entry: room_layout;
   museum: museum;
   theme: theme_config;
+  tier: gallery_tier;
   family: string;
   letter_open: boolean;
   on_open_letter: () => void;
@@ -43,37 +45,37 @@ function wrapped(text: string, family: string, size: number, width: number): str
  * @param props - Room layout, museum, theme, and letter state.
  * @returns The props for this room type.
  */
-export function RoomProps({ entry, museum, theme, family, letter_open, on_open_letter }: room_props_props) {
+export function RoomProps({ entry, museum, theme, tier, family, letter_open, on_open_letter }: room_props_props) {
   if (entry.type === "lobby") {
-    return <LobbyProps entry={entry} museum={museum} theme={theme} family={family} />;
+    return <LobbyProps entry={entry} museum={museum} theme={theme} tier={tier} family={family} />;
   }
   if (entry.type === "letter" && entry.desk) {
     return <LetterDesk entry={entry} theme={theme} letter_open={letter_open} on_open_letter={on_open_letter} />;
   }
   if (!entry.has_door) {
-    return <FinaleProps entry={entry} museum={museum} theme={theme} family={family} />;
+    return <FinaleProps entry={entry} museum={museum} theme={theme} tier={tier} family={family} />;
   }
   return null;
 }
 
-function LobbyProps({ entry, museum, theme, family }: Pick<room_props_props, "entry" | "museum" | "theme" | "family">) {
+function LobbyProps({ entry, museum, theme, tier, family }: Pick<room_props_props, "entry" | "museum" | "theme" | "tier" | "family">) {
   const { palette } = theme;
   const title = useMemo(
     () =>
       glow_text_texture({
         lines: [
-          { text: museum.title, size: 190, weight: 700 },
+          { text: museum.title, size: tier === "high" ? 190 : 120, weight: 700 },
           ...(museum.title.toLowerCase().includes(museum.recipient_name.toLowerCase())
             ? []
-            : [{ text: `for ${museum.recipient_name}`, size: 110, weight: 500, italic: true, color: palette.accent_soft }]),
+            : [{ text: `for ${museum.recipient_name}`, size: tier === "high" ? 110 : 70, weight: 500, italic: true, color: palette.accent_soft }]),
         ],
         family,
-        width: 2048,
-        height: 420,
+        width: tier === "high" ? 2048 : 1280,
+        height: tier === "high" ? 420 : 262,
         glow: palette.accent,
         color: palette.text,
       }),
-    [museum.title, museum.recipient_name, family, palette],
+    [museum.title, museum.recipient_name, family, palette, tier],
   );
   const note = useMemo(
     () =>
@@ -83,10 +85,10 @@ function LobbyProps({ entry, museum, theme, family }: Pick<room_props_props, "en
         body: museum.dedication,
         family,
         palette,
-        width: 800,
-        height: 560,
+        width: tier === "high" ? 800 : 560,
+        height: tier === "high" ? 560 : 392,
       }),
-    [museum.recipient_name, museum.dedication, family, palette],
+    [museum.recipient_name, museum.dedication, family, palette, tier],
   );
   useEffect(() => () => title.dispose(), [title]);
   useEffect(() => () => note.dispose(), [note]);
@@ -116,24 +118,24 @@ function LobbyProps({ entry, museum, theme, family }: Pick<room_props_props, "en
   );
 }
 
-function FinaleProps({ entry, museum, theme, family }: Pick<room_props_props, "entry" | "museum" | "theme" | "family">) {
+function FinaleProps({ entry, museum, theme, tier, family }: Pick<room_props_props, "entry" | "museum" | "theme" | "tier" | "family">) {
   const { palette } = theme;
   const closing = entry.room.exhibits.find((item) => item.kind === "note")?.body ?? theme.default_copy.closing;
   const texture = useMemo(
     () =>
       glow_text_texture({
         lines: [
-          { text: entry.room.name, size: 84, weight: 500, italic: true, color: palette.accent_soft },
-          ...wrapped(closing, family, 124, 1700).map((text) => ({ text, size: 124, weight: 700 })),
+          { text: entry.room.name, size: tier === "high" ? 84 : 52, weight: 500, italic: true, color: palette.accent_soft },
+          ...wrapped(closing, family, tier === "high" ? 124 : 78, tier === "high" ? 1700 : 1060).map((text) => ({ text, size: tier === "high" ? 124 : 78, weight: 700 })),
         ],
         family,
-        width: 2048,
-        height: 1100,
+        width: tier === "high" ? 2048 : 1280,
+        height: tier === "high" ? 1100 : 688,
         glow: palette.accent,
         color: palette.text,
         line_gap: 1.3,
       }),
-    [entry.room.name, closing, family, palette],
+    [entry.room.name, closing, family, palette, tier],
   );
   useEffect(() => () => texture.dispose(), [texture]);
   const glow = glow_texture();
@@ -217,24 +219,24 @@ function LetterDesk({
     <group position={[desk.x, 0, desk.z]}>
       <mesh position={[0, 0.78, 0]}>
         <boxGeometry args={[1.7, 0.07, 0.9]} />
-        <meshStandardMaterial color={palette.door} roughness={0.55} metalness={0.1} />
+        <meshLambertMaterial color={palette.door} />
       </mesh>
       {([-0.76, 0.76] as const).flatMap((x) =>
         ([-0.38, 0.38] as const).map((z) => (
           <mesh key={`${x}${z}`} position={[x, 0.39, z]}>
             <boxGeometry args={[0.07, 0.78, 0.07]} />
-            <meshStandardMaterial color={palette.door} roughness={0.6} />
+            <meshLambertMaterial color={palette.door} />
           </mesh>
         )),
       )}
 
       <mesh position={[0.62, 0.84, -0.1]}>
         <cylinderGeometry args={[0.1, 0.12, 0.05, 20]} />
-        <meshStandardMaterial color="#2b2320" metalness={0.5} roughness={0.4} />
+        <meshLambertMaterial color="#2b2320" />
       </mesh>
       <mesh position={[0.62, 1.1, -0.1]}>
         <cylinderGeometry args={[0.012, 0.012, 0.5, 8]} />
-        <meshStandardMaterial color="#2b2320" metalness={0.5} roughness={0.4} />
+        <meshLambertMaterial color="#2b2320" />
       </mesh>
       <mesh position={[0.62, 1.4, -0.1]}>
         <coneGeometry args={[0.2, 0.2, 24, 1, true]} />
@@ -244,7 +246,6 @@ function LetterDesk({
         <planeGeometry args={[1.5, 1.5]} />
         <meshBasicMaterial map={glow} color="#ffb870" transparent opacity={0.4} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
-      <pointLight position={[0.62, 1.3, 0]} color="#ffc78a" intensity={7} distance={5} decay={2} />
 
       <group position={[-0.15, 0.815, 0.05]} rotation={[0, 0.12, 0]}>
         <mesh>

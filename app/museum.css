@@ -1634,3 +1634,191 @@
     animation: none;
   }
 }
+
+/* --- Experience chooser and phone-friendly rendering --- */
+
+.experience_chooser {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  background: var(--mm-gradient), var(--mm-bg-deep);
+  color: var(--mm-text);
+}
+
+.experience_inner {
+  width: min(62rem, 100%);
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  text-align: center;
+}
+
+.experience_inner h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 5.5vw, 3.2rem);
+  line-height: 1;
+}
+
+.experience_lead {
+  margin: 0;
+  max-width: 32rem;
+  color: var(--mm-text-muted);
+}
+
+.experience_options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  width: 100%;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.experience_card {
+  position: relative;
+  display: grid;
+  gap: 0.55rem;
+  align-content: start;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 1.2rem 1rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text) 22%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--mm-bg-deep) 62%, transparent);
+  color: var(--mm-text);
+  text-align: left;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.experience_card strong {
+  font-size: 1.45rem;
+  line-height: 1.1;
+}
+
+.experience_card span:not(.experience_badge) {
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.experience_card small {
+  color: var(--mm-text-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.experience_card:hover:not(:disabled),
+.experience_card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--mm-accent);
+  background: color-mix(in srgb, var(--mm-accent) 14%, var(--mm-bg-deep));
+}
+
+.experience_card[data-recommended="true"] {
+  border-color: var(--mm-accent);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--mm-accent) 28%, transparent);
+}
+
+.experience_card:disabled {
+  opacity: 0.45;
+}
+
+.experience_badge {
+  justify-self: start;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  background: var(--mm-accent);
+  color: var(--mm-ink);
+  font-size: 0.72rem !important;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.experience_foot {
+  margin: 0.2rem 0 0;
+  color: var(--mm-text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 760px) {
+  .experience_options {
+    grid-template-columns: 1fr;
+  }
+  .experience_card {
+    padding: 0.9rem;
+  }
+}
+
+@media (max-height: 460px) and (min-width: 600px) {
+  .experience_inner {
+    gap: 0.5rem;
+  }
+  .experience_options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+  .experience_card {
+    padding: 0.7rem;
+    gap: 0.3rem;
+  }
+  .experience_card strong {
+    font-size: 1.1rem;
+  }
+  .experience_card span:not(.experience_badge) {
+    font-size: 0.8rem;
+  }
+  .experience_card small,
+  .experience_lead,
+  .experience_foot {
+    display: none;
+  }
+}
+
+.change_experience {
+  position: fixed;
+  z-index: 35;
+  top: calc(2.9rem + env(safe-area-inset-top));
+  right: 0.75rem;
+  min-height: 34px;
+  padding: 0 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--mm-text, #fff) 26%, transparent);
+  border-radius: 999px;
+  background: rgb(10 5 8 / 0.72);
+  color: var(--mm-text, #fff);
+  font-size: 0.78rem;
+}
+
+/* Phones: blur over a moving 3D scene is expensive, so the controls go solid instead. */
+.gallery3d_viewer[data-tier="low"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.gallery3d_viewer[data-tier="low"] .gallery3d_round,
+.gallery3d_viewer[data-tier="low"] .gallery3d_chip,
+.gallery3d_viewer[data-tier="low"] .gallery3d_exit {
+  background: color-mix(in srgb, var(--mm-bg-deep) 88%, transparent);
+}
+
+.gallery3d_viewer[data-tier="low"] .gallery3d_inspect,
+.gallery3d_viewer[data-tier="low"] .gallery3d_sheet,
+.gallery3d_viewer[data-tier="low"] .gallery3d_letter {
+  background: color-mix(in srgb, var(--mm-bg-deep) 96%, transparent);
+}
+
+.gallery3d_viewer[data-tier="low"] .gallery3d_cta {
+  box-shadow: none;
+}
+
+.gallery3d_viewer {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery3d_viewer .gallery3d_canvas {
+  user-select: none;
+  -webkit-user-select: none;
+}

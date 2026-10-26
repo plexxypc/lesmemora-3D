@@ -10,8 +10,9 @@ export function SiteFooter() {
   const socials = public_contact_links();
   return (
     <footer className="flex flex-wrap gap-x-5 gap-y-2 px-5 py-8 text-sm text-[#e3c3d0]">
+      <Link href="/order">Order a museum</Link>
       <a href={whatsapp_link(order_message)} target="_blank" rel="noopener noreferrer">
-        Message us to order
+        Message us on WhatsApp
       </a>
       {socials.map((link) => (
         <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">

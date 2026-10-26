@@ -4,7 +4,6 @@ import { ContactDock } from "@/components/contact/contact_dock";
 import { SiteFooter } from "@/components/site_footer";
 import { SiteHeader } from "@/components/site_header";
 import { ThemePreview } from "@/components/theme/theme_preview";
-import { order_message, whatsapp_link } from "@/lib/contact";
 import { plans } from "@/lib/plans";
 import { list_sample_museums } from "@/lib/sample_museums";
 import { get_theme, list_themes, theme_css_vars } from "@/lib/themes";
@@ -37,9 +36,9 @@ export function HomePage() {
               Photos, milestones, and letters in a quiet hallway, shared with one private link. Made for a phone turned sideways.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a className="mm_button" href={whatsapp_link(order_message)} target="_blank" rel="noopener noreferrer">
+              <Link className="mm_button no-underline" href="/order">
                 Create yours
-              </a>
+              </Link>
               <Link className="mm_button mm_button_quiet no-underline" href="/m/sample-romantic">
                 Walk the sample
               </Link>

@@ -9,6 +9,7 @@ import {
   Color,
   DoubleSide,
   InstancedMesh,
+  type Mesh,
   Object3D,
   PlaneGeometry,
   type Points,
@@ -62,7 +63,7 @@ export function Atmosphere({ theme, tier, reduce_motion, layout }: atmosphere_pr
     return null;
   }
   const style = styles[theme.background.motif];
-  const count = tier === "high" ? style.count_high : style.count_low;
+  const count = tier === "high" ? style.count_high : Math.round(style.count_low * 0.6);
   return style.mode === "flutter" ? (
     <FlutterLayer theme={theme} style={style} count={count} layout={layout} />
   ) : (
@@ -452,21 +453,25 @@ function FloorScatter({ entry, theme, tier }: { entry: room_layout; theme: theme
 }
 
 function HearthGlow({ entry, theme, reduce_motion }: { entry: room_layout; theme: theme_config; reduce_motion: boolean }) {
-  const light = useRef<{ intensity: number } | null>(null);
+  const glow_mesh = useRef<Mesh>(null);
   const glow = glow_texture();
   useFrame((frame) => {
-    if (light.current && !reduce_motion) {
+    const material = glow_mesh.current?.material as { opacity: number } | undefined;
+    if (material && !reduce_motion) {
       const t = frame.clock.elapsedTime;
-      light.current.intensity = 5 + Math.sin(t * 7.1) * 0.9 + Math.sin(t * 13.3 + entry.index) * 0.6;
+      material.opacity = 0.26 + Math.sin(t * 7.1) * 0.04 + Math.sin(t * 13.3 + entry.index) * 0.03;
     }
   });
   return (
     <>
-      <mesh position={[0, 0.9, entry.z_far + 0.3]} renderOrder={2}>
+      <mesh ref={glow_mesh} position={[0, 0.9, entry.z_far + 0.3]} renderOrder={2}>
         <planeGeometry args={[3.4, 2.2]} />
-        <meshBasicMaterial map={glow} color="#ff9a4a" transparent opacity={0.22} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
+        <meshBasicMaterial map={glow} color="#ff9a4a" transparent opacity={0.26} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
-      <pointLight ref={light} position={[0, 1.1, entry.z_far + 0.8]} color={theme.palette.accent} intensity={5} distance={8} decay={2} />
+      <mesh position={[0, 0.5, entry.z_far + 0.32]} renderOrder={3}>
+        <planeGeometry args={[1.6, 1.0]} />
+        <meshBasicMaterial map={glow} color={theme.palette.accent} transparent opacity={0.3} blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
     </>
   );
 }
